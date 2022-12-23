@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'zing_it/css/songs.css' %}" />
+    <title>Songs Page</title>
+</head>
+<body>
+    <h1><center>{{playlist_name}}</center></h1>
+    <table>
+        <tr>
+            <th>No.</th>
+            <th>Track</th>
+            <th>Artist</th>
+            <th>Album</th>
+            <th>Length</th>
+        </tr>
+        {% for song in songs %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{song.Track}}</td>
+            <td>{{song.Artist}}</td>
+            <td>{{song.Album}}</td>
+            <td>{{song.Length}}</td>
+           
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
