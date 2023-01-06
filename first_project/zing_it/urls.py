@@ -6,4 +6,4 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.home, name="home"),
     path('playlist/<int:id>', views.playlist, name="playlist"),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
