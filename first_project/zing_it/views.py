@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import Http404
+from .forms import Signup
 # Create your views here.
 
 my_playlists=[
@@ -34,3 +35,16 @@ def playlist(request, id):
             songs.append(song)
     
     return render(request, 'zing_it/songs.html', {"songs":songs,"playlist_name":playlist_name})
+
+def signup(request):
+    form = Signup(request.POST or None)
+    status = " "
+    if form.is_valid():
+        password = form.cleaned_data.get("password")
+        confirm_password = form.cleaned_data.get("confirm_password")
+        if(password != confirm_password):
+            status = "Your passwords don't match!"
+        else:
+            status = "Signup done successfully!"
+
+    return render(request, 'zing_it/signup.html', {"form":form, "status":status})
