@@ -6,6 +6,7 @@ class Song(models.Model):
     artist = models.CharField(max_length=50, unique= True)
     album = models.CharField(max_length=70)
     length = models.TimeField()
+    playlist_name = models.ManyToManyField('Playlist')
 
 class Playlist(models.Model):
     name = models.CharField(max_length=70, unique= True)
