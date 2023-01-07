@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import Http404
-from .forms import Signup
+from .forms import Signup, Login
 # Create your views here.
 
 my_playlists=[
@@ -36,6 +36,9 @@ def playlist(request, id):
     
     return render(request, 'zing_it/songs.html', {"songs":songs,"playlist_name":playlist_name})
 
+users = [
+    {"id":1, "full_name":"john", "email": "john123@gmail.com", "password" : "adminpass"},
+]
 def signup(request):
     form = Signup(request.POST or None)
     status = " "
@@ -48,3 +51,16 @@ def signup(request):
             status = "Signup done successfully!"
 
     return render(request, 'zing_it/signup.html', {"form":form, "status":status})
+
+    def login(request):
+        form = Login(request.POST or None)
+        status = " "
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
+            user = next((user for user in users if user["email"] == email and user["password"] == password), None)
+            if user:
+                status = "Successfully logged in!"
+            else:
+                status = "Wrong credentials!"
+        return render(request, 'zing_it/login.html', {"form" : form, "status" : status})
