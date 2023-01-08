@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import Http404
 from .forms import Signup, Login
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 # Create your views here.
 
 my_playlists=[
@@ -36,31 +38,44 @@ def playlist(request, id):
     
     return render(request, 'zing_it/songs.html', {"songs":songs,"playlist_name":playlist_name})
 
-users = [
-    {"id":1, "full_name":"john", "email": "john123@gmail.com", "password" : "adminpass"},
-]
+# users = [
+#     {"id":1, "full_name":"john", "email": "john123@gmail.com", "password" : "adminpass"},
+# ]
 def signup(request):
     form = Signup(request.POST or None)
-    status = " "
+    
     if form.is_valid():
         password = form.cleaned_data.get("password")
         confirm_password = form.cleaned_data.get("confirm_password")
+        name = form.cleaned_data.get("full_name")
+        email = form.cleaned_data.get("email")
+
         if(password != confirm_password):
-            status = "Your passwords don't match!"
+            return render(request, 'zing_it/signup.html', {"form":form, "status" : "Your passwords don't match!"})
         else:
-            status = "Signup done successfully!"
+            try:
+                user = User.objects.get(email=email)
+                return render(request, 'zing_it/signup.html',{"form":form, "status":"This email already exists, please log in."})
+            except Exception as e:
+                print(e)
+                new_user = User.objects.create_user(username=name, email = email, password=password)
+                new_user.save()
+                return render(request, 'zing_it/signup.html',{"form":form, "status":"Signup successfully!"})
+    return render(request, 'zing_it/signup.html', {"form":form})
+
+        
 
     return render(request, 'zing_it/signup.html', {"form":form, "status":status})
 
-    def login(request):
-        form = Login(request.POST or None)
-        status = " "
-        if form.is_valid():
-            email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("password")
-            user = next((user for user in users if user["email"] == email and user["password"] == password), None)
-            if user:
-                status = "Successfully logged in!"
-            else:
-                status = "Wrong credentials!"
-        return render(request, 'zing_it/login.html', {"form" : form, "status" : status})
+def login(request):
+    form = Login(request.POST or None)
+    status = " "
+    if form.is_valid():
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password")
+        user = next((user for user in users if user["email"] == email and user["password"] == password), None)
+        if user:
+            status = "Successfully logged in!"
+        else:
+            status = "Wrong credentials!"
+    return render(request, 'zing_it/login.html', {"form" : form, "status" : status})
