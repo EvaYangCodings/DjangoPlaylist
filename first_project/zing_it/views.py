@@ -4,6 +4,7 @@ from django.http import Http404
 from .forms import Signup, Login
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib.auth import logout
 # Create your views here.
 
 my_playlists=[
@@ -77,3 +78,7 @@ def login(request):
         else:
             status = "Wrong credentials! Try again."
     return render(request, 'zing_it/login.html', {"form" : form, "status" : status})
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'zing_it/home.html')
